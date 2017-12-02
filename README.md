@@ -80,6 +80,7 @@ Options:
 
 # Arpmap
 !! requires arp-scan and nmap to run !!
+
 Arpmap is an application that combines arp-scan and nmap to find all of the machines on a local network then find their display names
 It can also be set to scan the ports on all local machines. Including an intensive scan.
 
