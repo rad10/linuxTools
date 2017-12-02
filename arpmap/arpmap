@@ -1,0 +1,84 @@
+#!/bin/bash
+
+#test to see if nmap is installed
+command -v nmap >/dev/null 2>&1 || { echo >&2 "Error: Nmap isnt installed. Please install nmap to run this script. Exiting."; exit 1; }
+command -v arp-scan >/dev/null 2>&1 || { echo >&2 "Error: Nmap isnt installed. Please install arp-scan to run this script. Exiting."; exit 1; }
+if [ "$(id -u)" != "0" ]; then
+	echo "Sorry, you must be in sudo to run this."
+	exit 1
+fi
+
+#init variables
+spot=("$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8")
+v=true; t=false; ln=false; p=false; P=false; r=false; e=false
+opt="-sL"
+cd ~/.arpip/
+#options
+for i in `seq 0 $((${#spot[@]}-1))`; do
+	case "${spot[$i]}" in
+		"-f" | "-file" | "--file")	ip=`cat ${spot[$(($i+1))]}` ;;
+		"-tl" | "-textlist" | "--textlist")	ipgroup=${spot[$(($i+1))]} ;;
+		"-ln" | "-local" | "--local")	ln=true ;;
+		"-vi" | "-visual" | "--visual")	v=true; t=false; p=false; P=false; e=false ;;
+		"-t")	t=true; v=false; p=false; P=false; e=false ;;
+		"-p")	p=true; P=false; v=false; t=false; e=false ;;
+		"-P")	P=true; p=false;v=false; t=false; e=false ;;
+		"-e")	e=true; P=true; p=false;v=false; t=false ;;
+		"-r")	r=true ;;
+		"-h" | "-help" | "--help")
+		echo -e "\n$0 [OPTION] [IPADDRESS]"
+		echo "$0 is a program made to scan a list of ip's and return a list of alive hosts and their names. This program is dependant on nmap and its functions to properly work"
+		echo -e "\nOptions:\n"
+		echo "-f | (-)-file			Input ip list from file"
+		echo "-tl | (-)-textlist [default]	Input ip's. it can be 1 or more, but to have you multiple it must be in quotes and there has to be a space in between each ip address. you can also scan multiple addresses with a - in between the numbers"
+		echo -e "				Example: \"123.456.789.101 987.654.321.012\" \"123.832.1.0-255 101.204.294.103\""
+		echo "-ln | (-)-local			Scans entire local network. no given ip address is required"
+		echo "-vi | (-)-visual [default]	Gives you a visual with alive machine ip's and names. it is on by default"
+		echo "-t				simple output. doesnt give names, but gives alive ips in list for to be used by other program"
+		echo "-r				Adds -Pn command to nmap script"
+		exit 1;;
+		"-"*)	echo "Error: incorrect command use. Command ${spot[$i]} doesnt exist. use $0 -h to find possible arguements"; exit 1 ;;
+		*)	if [[ "${spot[$i]}" != "-"* ]] && [[(-n ${spot[$i]})]] && [[(-z ${spot[$(($i+1))]})]]; then
+				ipgroup="$ipgroup ${spot[$i]}"
+			fi
+			break ;;
+	esac
+done
+
+if $ln; then
+	ip=`hostname -I | cut -d" " -f1 | cut -d"." -f1,2`
+	arp-scan -ln | grep "$ip.*.*" > arplist.txt
+	iplist=`python arp.py`
+else
+	iplist=$ipgroup
+fi
+if $t; then
+	#count=`'python -c 'lst=str("'$iplist'").split(" "); print len(lst)'`
+	echo $iplist
+	#ipgroup=`echo $iplist | cut -d" " -f1:$count`
+	exit 1
+elif $v; then
+	if $r; then
+		nmap -sL -Pn $iplist; exit 1
+	else
+		nmap -sL $iplist; exit 1
+	fi
+elif $p; then
+	if $r; then
+		nmap -Pn $iplist; exit 1
+	else
+		nmap $iplist; exit 1
+	fi
+elif $P; then
+	if $r; then
+		nmap -T4 -A -v -Pn $iplist; exit 1
+	else
+		nmap -T4 -A -v $iplist; exit 1
+	fi
+elif $e; then
+	if $r; then
+		nmap -O -sV -Pn $iplist; exit 1
+	else
+		nmap -O -sV $iplist; exit 1
+	fi
+fi
