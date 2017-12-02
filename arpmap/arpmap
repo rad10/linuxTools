@@ -35,6 +35,9 @@ for i in `seq 0 $((${#spot[@]}-1))`; do
 		echo "-ln | (-)-local			Scans entire local network. no given ip address is required"
 		echo "-vi | (-)-visual [default]	Gives you a visual with alive machine ip's and names. it is on by default"
 		echo "-t				simple output. doesnt give names, but gives alive ips in list for to be used by other program"
+		echo "-p				Scans ports on all machines"
+		echo "-P				Scans all ports intensively. similiar to  zenmaps intensive scan"
+		echo "-e				Scans ports along with services and OS"
 		echo "-r				Adds -Pn command to nmap script"
 		exit 1;;
 		"-"*)	echo "Error: incorrect command use. Command ${spot[$i]} doesnt exist. use $0 -h to find possible arguements"; exit 1 ;;
