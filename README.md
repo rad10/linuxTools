@@ -64,6 +64,7 @@ You input an IP address and it gives you up to 1000 web addresses on that server
 This application uses viewdns.info to get its information.
 
 Options:
+
 -gui	Uses w3m to view what is shown on the actual website.
 
 
@@ -73,6 +74,7 @@ It requires two words to search, like in this example "rwhoisname John Doe" but 
 This application uses viewdns.info to collect its information
 
 Options:
+
 -gui	Uses w3m to view what is shown on the actual website.
 
 
@@ -84,12 +86,21 @@ It can also be set to scan the ports on all local machines. Including an intensi
 Options:
 
 -f | (-)-file			Input ip list from file
+
 -tl | (-)-textlist [default]	Input ip's. it can be 1 or more, but to have you multiple it must be in quotes and there has to be a space in between each ip address. you can also scan multiple addresses with a - in between the numbers
+
 				Example: "123.456.789.101 987.654.321.012" "123.832.1.0-255 101.204.294.103"
+
 -ln | (-)-local			Scans entire local network. no given ip address is required
+
 -vi | (-)-visual [default]	Gives you a visual with alive machine ip's and names. it is on by default
+
 -t				simple output. doesnt give names, but gives alive ips in list for to be used by other program
+
 -p				Scans ports on all machines
+
 -P				Scans all ports intensively. similiar to  zenmaps intensive scan
+
 -e				Scans ports along with services and OS
+
 -r				Adds -Pn command to nmap script
