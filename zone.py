@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import json
-from sys import argv
+from sys import argv, exit
 import urllib
 #[Intro Config Variables]#
 errors=name=dns=help=check=soa=a=aaaa=detail=mx=cname=b=False
@@ -19,7 +19,9 @@ for i in argv[1:]: #grabs all args - zone.py
 	elif (i=="-mx"): mx=True
 	elif (i=="-cname"): cname=True
 	elif (i=="-b"): b=True
-	elif (i[0]=="-"): print("Incorrect Command")
+	elif (i[0]=="-"):
+		print("Incorrect Command")
+		exit()
 	else:
 		if (i[0:7]=="http://"): url=i[7:]
 		elif (i[0:8]=="https://"): url=(i[8:])
