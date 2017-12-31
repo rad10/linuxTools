@@ -6,6 +6,7 @@ import urllib
 errors=name=dns=help=check=soa=a=aaaa=detail=mx=cname=b=False
 url="google.com"
 #[/Intro Config Variables]#
+#[Config]#
 for i in argv[1:]: #grabs all args - zone.py
 	if (i=="--all"): errors=name=dns=help=check=soa=a=aaaa=detail=mx=cname=True
 	elif (i=="-name"): name=True
@@ -23,10 +24,6 @@ for i in argv[1:]: #grabs all args - zone.py
 		if (i[0:7]=="http://"): url=i[7:]
 		elif (i[0:8]=="https://"): url=(i[8:])
 		else: url=i
-		#print url
-	#else: help=True
-
-
 #[/Config]#
 #[Import JSON info from site]#
 try:
@@ -35,14 +32,13 @@ try:
 	sock.close()
 	#[/Import JSON from site]#
 	jsonData = json.loads(jsonSite) #Turn JSON into usable data
-	#[Config]#
 except:
 	print("Error: cannot connect to site")
 	exit()
 #[Generator]#
-
 if errors: print("Errors: "+str(jsonData["errors"]))
 if name: print("url: "+str(jsonData["name"]))
+#[Naming Servers]#
 if dns:
 	print("Naming Servers:")
 	print("IPv4:")
@@ -57,6 +53,7 @@ if dns:
 		for i in jsonData["parent"]["glue"]["v6"]: #lists every server that uses ipv6
 			print("+name: "+i["name"]) #lists the name
 			print("+Address: "+i["address"]) #lists the address
+#[/Naming Servers]#
 #[SOA]#
 if soa:
 	total=0 #holds tally for all servers that say true
