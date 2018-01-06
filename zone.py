@@ -4,7 +4,7 @@ from sys import argv, exit
 import urllib
 #[Intro Config Variables]#
 errors=name=dns=help=check=soa=a=aaaa=detail=mx=cname=b=False
-url="google.com"
+url=""
 #[/Intro Config Variables]#
 #[Config]#
 for i in argv[1:]: #grabs all args - zone.py
@@ -26,6 +26,9 @@ for i in argv[1:]: #grabs all args - zone.py
 		if (i[0:7]=="http://"): url=i[7:]
 		elif (i[0:8]=="https://"): url=(i[8:])
 		else: url=i
+if(url==""):
+	print("Error: no website inputed. please input a website.")
+	exit()
 #[/Config]#
 #[Import JSON info from site]#
 try:
@@ -50,11 +53,12 @@ if dns:
 			print("+Name: "+i["name"]) #lists the name
 			print("+Address: "+i["address"]) #lists the address
 	print("IPv6:")
-	if (str(jsonData["parent"]["glue"]["v6"])=="None"):print("+None") #if theres no record, itll display it as no record
+	if (str(jsonData["parent"]["glue"]["v6"])=="None"):print("+None\n") #if theres no record, itll display it as no record
 	else:
 		for i in jsonData["parent"]["glue"]["v6"]: #lists every server that uses ipv6
 			print("+name: "+i["name"]) #lists the name
 			print("+Address: "+i["address"]) #lists the address
+		print("")
 #[/Naming Servers]#
 #[SOA]#
 if soa:
@@ -81,7 +85,8 @@ if soa:
 				print("+Primary Server: "+str(jsonData["authoritative"]["soa"][i]["records"][0]["mname"])) 
 				print("+Responsible Party: "+str(jsonData["authoritative"]["soa"][i]["records"][0]["rname"]))
 				print("+Serial Number: "+str(jsonData["authoritative"]["soa"][i]["records"][0]["serial"]))
-		else: print("There is no A Record info available") #Will only print this is there no record info to be found
+			print("")
+		else: print("There is no SOA Record info available\n") #Will only print this is there no record info to be found
 #[/SOA]#
 #[A]#
 if a:
@@ -106,7 +111,8 @@ if a:
 				print(jsonData["authoritative"]["a"][i]["source"]) #Prints the server name
 				print("+Name: "+str(jsonData["authoritative"]["a"][i]["records"][0]["name"])) #Prints the websites name
 				print("+Address: "+str(jsonData["authoritative"]["a"][i]["records"][0]["address"])) #Prints the info given
-		else: print("There is no A Record info available") #Will only print this is there no record info to be found
+			print("")
+		else: print("There is no A Record info available\n") #Will only print this is there no record info to be found
 #[/A]#
 #[AAAA]#
 if aaaa:
@@ -131,7 +137,8 @@ if aaaa:
 				print(jsonData["authoritative"]["aaaa"][i]["source"]) #Prints the server name
 				print("+Name: "+str(jsonData["authoritative"]["aaaa"][i]["records"][0]["name"])) #Prints the websites name
 				print("+Address: "+str(jsonData["authoritative"]["aaaa"][i]["records"][0]["address"])) #Prints the info given
-		else: print("There is no A Record info available") #Will only print this is there no record info to be found
+			print("")
+		else: print("There is no AAAA Record info available\n") #Will only print this is there no record info to be found
 #[/AAAA]#
 #[MX]#
 if mx:
@@ -156,7 +163,8 @@ if mx:
 				print(jsonData["authoritative"]["mx"][i]["source"]) #Prints the server name
 				print("+Name: "+str(jsonData["authoritative"]["mx"][i]["records"][0]["name"])) #Prints the websites name
 				print("+Address: "+str(jsonData["authoritative"]["mx"][i]["records"][0]["exchange"])) #Prints the info given
-		else: print("There is no MX Record info available") #Will only print this is there no record info to be found
+			print("")
+		else: print("There is no MX Record info available\n") #Will only print this is there no record info to be found
 #[/MX]#
 #[CNAME]#
 if cname:
@@ -181,6 +189,7 @@ if cname:
 				print(jsonData["authoritative"]["cname"][i]["source"]) #Prints the server name
 				print("+Name: "+str(jsonData["authoritative"]["cname"][i]["records"][0]["name"])) #Prints the websites name
 				#print("+Address: "+str(jsonData["authoritative"]["cname"][i]["records"][0]["address"])) #Prints the info given
-		else: print("There is no CNAME Record info available") #Will only print this is there no record info to be found
+			print("")
+		else: print("There is no CNAME Record info available\n") #Will only print this is there no record info to be found
 #[/CNAME]#
 #[/Generator]#
