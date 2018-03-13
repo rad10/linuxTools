@@ -1,9 +1,27 @@
 #!/bin/bash
-
-if [[ "$1" == "-gui" ]]; then
-	w3m "http://viewdns.info/reversewhois/?q=$2+$3"; exit 1
+v=false;gui=false
+groupSearch=""; s=-s0
+for i in $*; do
+	case "$i" in
+		"-gui")	gui=true;;
+		"-v") v=true;;
+		"-s"*) s=$i;;
+		"-"*)	echo "Error:"+i+"isn't a command for this script."; exit 1;;
+		*)	groupSearch=$groupSearch+$i;;
+	esac
+done
+if [[ "$groupSearch" == "" ]]; then
+	echo "Error: you didnt enter any search terms. Try again with some proper search terms."; exit 1
+fi
+groupSearch="$groupSearch"
+if $gui; then
+	w3m "http://viewdns.info/reversewhois/?q=$groupSearch"; exit 1
 fi
 cd ~/.rip/
-echo -n > ripHtml
-curl "http://viewdns.info/reversewhois/?q=$1+$2" | grep '<table border="1">' >> ripHtml
-python ripWhois.py
+if $v; then
+	searchTerm=`curl -s "http://viewdns.info/reversewhois/?q=$groupSearch" | grep '<table border="1">'`
+	python ripWhois.py "$searchTerm" -web $s
+else
+	searchTerm=`curl "http://viewdns.info/reversewhois/?q=$groupSearch" | grep '<table border="1">'`
+	python ripWhois.py "$searchTerm" $s
+fi
