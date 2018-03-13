@@ -1,5 +1,5 @@
 #!/bin/bash
 mkdir ~/bin
-cp rip ~/bin
+sudo cp rip ~/bin
 mkdir ~/.rip/
 cp ripOrg.py ~/.rip/
