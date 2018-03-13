@@ -1,6 +1,12 @@
-html=open("ripHtml","r").read()
-#html="<table><tr><td>Hello</td><td>World1</td></tr><tr><td>Hello</td><td>World2</td></tr><tr><td>Hello</td><td>World3</td></tr><tr><td>Hello</td><td>World4</td></tr><tr><td>Hello</td><td>World5</td></tr><tr><td>Hello</td><td>World6</td></tr></table>"
-html=html.split('<table border="1">')[1]
+from sys import argv, exit
+html = str(argv[1]) # this holds all of the html sourcing
+try:
+	html=html.split('<table border="1">')[1]
+except:
+	if "-web" in argv:
+		exit()
+	print("There are 0 domains attached to this ip")
+	exit()
 html=html.replace("</tr><tr>","|")
 html=html.replace('</td><td align="center">',"\\")
 html=html.replace("</td>| <td>","|")
@@ -8,12 +14,21 @@ html=html.replace("</td><td>","\\")
 html=html.replace("</td></tr></table><br></td>|</tr>","")
 html=html.replace("<tr><td>","")
 rows=html.split("|")
-for i in range(0,len(rows)):
+for i in range(len(rows)):
 	rows[i]=rows[i].split("\\")
 
-### print results
-print(str(rows[0][0])+" | "+str(rows[0][1]))
-print "----------------------"
-for i in range(1,len(rows)-1):
-	print(str(rows[i][0])+" | "+str(rows[i][1]))
+#Grabbing Samplesize if there
+e = 1
+while argv[e][:2] != "-s": e+=1
+sampleSize=int(argv[e][2:])
 
+### print results
+size = sampleSize+2 if (sampleSize > 0) else len(rows)
+if "-web" in argv[2:]:
+	for i in range(1,size-1):
+		print(str(rows[i][0]))
+else:
+	print(str(rows[0][0])+" | "+str(rows[0][1]))
+	print "----------------------"
+	for i in range(1,size-1):
+		print(str(rows[i][0])+" | "+str(rows[i][1]))

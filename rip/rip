@@ -1,9 +1,21 @@
 #!/bin/bash
-cdir = ~/.rip/
-if [[ "$1" == "-gui" ]]; then
-	w3m "http://viewdns.info/reverseip/?host=$2&t=1"; exit 1
-fi
+v=false
+ipCall=""; s=-s0
+for i in $*; do
+	case "$i" in
+		"-gui")	w3m "http://viewdns.info/reverseip/?host=$2&t=1"; exit 1;;
+		"-v") v=true;;
+		"-s"*) s=$i;;
+		"-"*)	echo "Error:"+i+"isn't a command for this script."; exit 1;;
+		*)	ipCall=$i;;
+	esac
+done
 cd ~/.rip/
-echo -n > ripHtml
-curl "http://viewdns.info/reverseip/?host=$1&t=1" | grep '<table border="1">' >> ripHtml
-python ripOrg.py
+
+if $v; then
+	ipSource=`curl -s "http://viewdns.info/reverseip/?host=$ipCall&t=1" | grep '<table border="1">'`
+	python ripOrg.py "$ipSource" -web $s
+else
+	ipSource=`curl "http://viewdns.info/reverseip/?host=$ipCall&t=1" | grep '<table border="1">'`
+	python ripOrg.py "$ipSource" $s
+fi
