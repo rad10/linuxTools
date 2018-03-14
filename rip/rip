@@ -10,12 +10,15 @@ for i in $*; do
 		*)	ipCall=$i;;
 	esac
 done
-cd ~/.rip/
-
+#make sure its been given a search term
+if [[ "$ipcall" != "" ]]; then
+	echo "Error: you didnt give a search term. try again but this time give a search term."
+	exit 1
+fi
 if $v; then
 	ipSource=`curl -s "http://viewdns.info/reverseip/?host=$ipCall&t=1" | grep '<table border="1">'`
-	python ripOrg.py "$ipSource" -web $s
+	python ~/.rip/ripOrg.py "$ipSource" -web $s
 else
 	ipSource=`curl "http://viewdns.info/reverseip/?host=$ipCall&t=1" | grep '<table border="1">'`
-	python ripOrg.py "$ipSource" $s
+	python ~/.rip/ripOrg.py "$ipSource" $s
 fi
