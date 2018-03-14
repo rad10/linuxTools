@@ -9,10 +9,10 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 #init variables
-spot=("$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8")
+spot=($*)
 v=true; t=false; ln=false; p=false; P=false; r=false; e=false
+i=""
 opt="-sL"
-cd ~/.arpip/
 #options
 for i in `seq 0 $((${#spot[@]}-1))`; do
 	case "${spot[$i]}" in
@@ -25,6 +25,7 @@ for i in `seq 0 $((${#spot[@]}-1))`; do
 		"-P")	P=true; p=false;v=false; t=false; e=false ;;
 		"-e")	e=true; P=true; p=false;v=false; t=false ;;
 		"-r")	r=true ;;
+		"-i"*)	i=`echo ${spot[$i]} | cut -d"i" -f2` ;;
 		"-h" | "-help" | "--help")
 		echo -e "\n$0 [OPTION] [IPADDRESS]"
 		echo "$0 is a program made to scan a list of ip's and return a list of alive hosts and their names. This program is dependant on nmap and its functions to properly work"
@@ -36,6 +37,7 @@ for i in `seq 0 $((${#spot[@]}-1))`; do
 		echo "-vi | (-)-visual [default]	Gives you a visual with alive machine ip's and names. it is on by default"
 		echo "-t				simple output. doesnt give names, but gives alive ips in list for to be used by other program"
 		echo "-r				Adds -Pn command to nmap script"
+		echo "-i*				interface to read from to find ip addresses"
 		exit 1;;
 		"-"*)	echo "Error: incorrect command use. Command ${spot[$i]} doesnt exist. use $0 -h to find possible arguements"; exit 1 ;;
 		*)	if [[ "${spot[$i]}" != "-"* ]] && [[(-n ${spot[$i]})]] && [[(-z ${spot[$(($i+1))]})]]; then
@@ -47,15 +49,17 @@ done
 
 if $ln; then
 	ip=`hostname -I | cut -d" " -f1 | cut -d"." -f1,2`
-	arp-scan -l | grep "$ip.*.*" > arplist.txt
-	iplist=`python arp.py`
+	if [[ "$i" != "" ]]; then
+		arpList=`arp-scan -l -I $i | grep "$ip.*.*"`
+	else
+		arpList=`arp-scan -l | grep "$ip.*.*"`
+	fi
+	iplist=`python ~/.arpip/arp.py "$arpList"`
 else
 	iplist=$ipgroup
 fi
 if $t; then
-	#count=`'python -c 'lst=str("'$iplist'").split(" "); print len(lst)'`
 	echo $iplist
-	#ipgroup=`echo $iplist | cut -d" " -f1:$count`
 	exit 1
 elif $v; then
 	if $r; then
