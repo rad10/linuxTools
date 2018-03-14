@@ -4,6 +4,6 @@
 #	exit 1
 #fi
 mkdir ~/bin
-sudo cp rwhoisname ~/bin/
+cp rwhois ~/bin/
 mkdir ~/.rip/
 cp ripWhois.py ~/.rip/
