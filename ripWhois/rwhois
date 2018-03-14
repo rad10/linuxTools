@@ -17,11 +17,10 @@ groupSearch="$groupSearch"
 if $gui; then
 	w3m "http://viewdns.info/reversewhois/?q=$groupSearch"; exit 1
 fi
-cd ~/.rip/
 if $v; then
 	searchTerm=`curl -s "http://viewdns.info/reversewhois/?q=$groupSearch" | grep '<table border="1">'`
-	python ripWhois.py "$searchTerm" -web $s
+	python ~/.rip/ripWhois.py "$searchTerm" -web $s
 else
 	searchTerm=`curl "http://viewdns.info/reversewhois/?q=$groupSearch" | grep '<table border="1">'`
-	python ripWhois.py "$searchTerm" $s
+	python ~/.rip/ripWhois.py "$searchTerm" $s
 fi
